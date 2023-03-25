@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  redis:
+    image: "redis:latest"
+    ports:
+      - "6379:6379"
+    volumes:
+      - "./data/redis:/data"
+  app:
+    build: .
+    ports:
+      - '8000:8000'
+    volumes:
+      - .:/opt
+    env_file:
+      - .env
+    depends_on:
+      - redis
