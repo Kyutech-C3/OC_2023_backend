@@ -3,11 +3,29 @@ package main
 import (
 	"fmt"
 	"log"
+	"net/http"
 
-	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	socketio "github.com/googollee/go-socket.io"
 )
+
+func GinMiddleware(allowOrigin string) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Writer.Header().Set("Access-Control-Allow-Origin", allowOrigin)
+		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT, DELETE")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "Accept, Authorization, Content-Type, Content-Length, X-CSRF-Token, Token, session, Origin, Host, Connection, Accept-Encoding, Accept-Language, X-Requested-With")
+
+		if c.Request.Method == http.MethodOptions {
+			c.AbortWithStatus(http.StatusNoContent)
+			return
+		}
+
+		c.Request.Header.Del("Origin")
+
+		c.Next()
+	}
+}
 
 func main() {
 	r := gin.New()
@@ -43,12 +61,29 @@ func main() {
 	// config.AllowAllOrigins = true
 	// config.AllowMethods = []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"}
 	// r.Use(cors.New(config))
-	r.Use(cors.New(cors.Config{
-		AllowAllOrigins:  true,
-		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
-		AllowHeaders:     []string{"Accept", "Content-Type", "Origin", "Content-Length"},
-		AllowCredentials: true,
-	}))
+
+	r.Use(GinMiddleware("http://localhost:5500"))
+	// r.Use(cors.New(cors.Config{
+	// 	AllowOrigins: []string{
+	// 		"http://localhost:5500",
+	// 		"http://localhost:3000",
+	// 	},
+	// 	AllowMethods: []string{
+	// 		"POST",
+	// 		"GET",
+	// 		"PATCH",
+	// 		"DELETE",
+	// 		"OPTIONS",
+	// 	},
+	// 	AllowHeaders: []string{
+	// 		"Access-Control-Allow-Credentials",
+	// 		"Access-Control-Allow-Headers",
+	// 		"Content-Type",
+	// 		"Content-Length",
+	// 		"Accept-Encoding",
+	// 	},
+	// 	AllowWebSockets: true,
+	// }))
 
 	go func() {
 		if err := server.Serve(); err != nil {
