@@ -7,13 +7,13 @@ services:
       - "6379:6379"
     volumes:
       - "./data/redis:/data"
-  app:
+  api:
     build: .
+    tty: true
+    volumes:
+      - .:/go/src/api
     ports:
       - '8000:8000'
-    volumes:
-      - .:/opt
     env_file:
       - .env
-    depends_on:
-      - redis
+    command: air

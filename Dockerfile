@@ -1,11 +1,8 @@
-FROM node:18-alpine3.16
+FROM golang:1.19.3-alpine
+RUN mkdir -p /go/src/api
+COPY . /go/src/api
+WORKDIR /go/src/api
 
-RUN mkdir -p /opt
-COPY . /opt/
-WORKDIR /opt
+RUN go install
 
-RUN npm i -g npm
-RUN npm install 
-RUN npm run build
-
-CMD npm run start:dev
+RUN go build -o /go/bin/air github.com/cosmtrek/air
