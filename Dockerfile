@@ -6,3 +6,7 @@ WORKDIR /go/src/api
 RUN go install
 
 RUN go build -o /go/bin/air github.com/cosmtrek/air
+
+EXPOSE 8000
+
+CMD [ "air" ]
