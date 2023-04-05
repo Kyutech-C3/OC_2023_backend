@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 
@@ -33,20 +32,13 @@ func main() {
 
 	server.OnConnect("/", func(s socketio.Conn) error {
 		s.SetContext("")
-		fmt.Println("connected:", s.ID())
+		log.Println("connected:", s.ID())
 		s.Join("bcast")
 		return nil
 	})
 
 	server.OnEvent("/", "msg", func(s socketio.Conn, msg string) {
-		server.BroadcastToRoom("", "bcast", "reply", msg)
-	})
-
-	server.OnEvent("/", "bye", func(s socketio.Conn) string {
-		last := s.Context().(string)
-		s.Emit("bye", last)
-		s.Close()
-		return last
+		server.BroadcastToRoom("/", "bcast", "reply", msg)
 	})
 
 	server.OnError("/", func(s socketio.Conn, e error) {
