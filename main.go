@@ -2,6 +2,9 @@ package main
 
 import (
 	"log"
+	"oc-2023/config"
+	"oc-2023/db"
+	"oc-2023/routers"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -9,27 +12,14 @@ import (
 
 func main() {
 	r := gin.New()
-	config := cors.DefaultConfig()
-	config.AllowAllOrigins = true
-	config.AllowMethods = []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"}
-	r.Use(cors.New(config))
+	cc := cors.DefaultConfig()
+	cc.AllowAllOrigins = true
+	cc.AllowMethods = []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"}
+	r.Use(cors.New(cc))
+	config.LoadConfig()
+	db.InitDB()
+	routers.Router(r)
 
-	hub := newHub()
-	go hub.run()
-
-	// r.GET("/", func(c *gin.Context) {
-	// 	http.ServeFile(c.Writer, c.Request, "index.html")
-	// })
-
-	r.GET("/", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "Hello World!",
-		})
-	})
-
-	r.GET("/ws", func(c *gin.Context) {
-		serveWs(hub, c.Writer, c.Request)
-	})
 	if err := r.Run(":8000"); err != nil {
 		log.Fatal("failed run app: ", err)
 	}

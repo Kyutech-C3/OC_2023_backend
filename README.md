@@ -20,11 +20,10 @@
     -   ブランチの命名規則
 
         ブランチは基本以下のように命名する
-        `[feature | fix]/[issue番号]-[issue内容]`
-        例えば issue 番号が`#14`で issue の内容が`headerの作成`だった場合以下のようになる
+        `名前/内容`
+        例えば編集者が`yamato`で、issue の内容が`headerの作成`だった場合以下のようになる
 
-        `feature/#14-header`
-        また不具合修正の場合`feature`の部分が`fix`となる
+        `yamato/create-header`
 
 -   コミットメッセージ
     コミットメッセージは以下のように記述する
