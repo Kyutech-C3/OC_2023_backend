@@ -21,7 +21,7 @@ services:
     depends_on:
       - db
   adminer:
-    container_name: penguin-adminer
+    container_name: oc-adminer
     image: adminer:4.7.5
     restart: always
     ports:
