@@ -9,6 +9,7 @@ require (
 )
 
 require (
+	github.com/Kyutech-C3/ToyBox v0.0.0-20220813115139-18603bc30dd9 // indirect
 	github.com/bytedance/sonic v1.8.6 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20221115062448-fe3a3abad311 // indirect
 	github.com/cosmtrek/air v1.42.0 // indirect
@@ -46,5 +47,5 @@ require (
 	google.golang.org/protobuf v1.30.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	gorm.io/driver/postgres v1.5.0 // indirect
-	gorm.io/gorm v1.24.7-0.20230306060331-85eaf9eeda11 // indirect
+	gorm.io/gorm v1.25.1 // indirect
 )
