@@ -3,29 +3,24 @@ package cruds
 import (
 	"errors"
 	"oc-2023/db"
-	// "github.com/Kyutech-C3/toybox-server/のデータベース"
+
+	"github.com/google/uuid"
 )
 
-func GiveLike(workId string, userId string) ( /*ToyBoxに返すWorkId,*/ err error) {
-	// workIdの型があっているか
-	// workはToyBoxから、userIdはフロントのuuidから
-	if err = db.Psql.Where("work_id = ? AND user_id = ?", workId, userId).First(&db.Likes{}).Error; err == nil {
-		err = errors.New("Like already exists.")
-		return
-	}
-
+func CreateLike(workId uuid.UUID, userId uuid.UUID) error {
 	lk := db.Likes{
 		WorkID: workId,
 		UserID: userId,
 	}
-	if err = db.Psql.Create(lk).Error; err != nil {
-		return
+
+	if err := db.Psql.Create(lk).Error; err != nil {
+		return err
 	}
-	// ここでToyBoxから作品を取得する関数 GetPost参考
-	return
+
+	return nil
 }
 
-func DeleteLike(workId string, userId string) ( /*ToyBoxに返すWorkId,*/ err error) {
+func DeleteLike(workId uuid.UUID, userId uuid.UUID) (err error) {
 	if err = db.Psql.Where("work_id = ? AND user_id = ?", workId, userId).First(&db.Likes{}).Error; err != nil {
 		err = errors.New("Like not found")
 		return
@@ -38,6 +33,5 @@ func DeleteLike(workId string, userId string) ( /*ToyBoxに返すWorkId,*/ err e
 	if err = db.Psql.Delete(lk).Error; err != nil {
 		return
 	}
-	// ここで
 	return
 }
