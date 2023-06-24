@@ -7,6 +7,6 @@ import (
 )
 
 func InitLikeRouter(r *gin.RouterGroup) {
-	r.POST("/", handlers.HandlePostLike)
-	r.DELETE("/", handlers.HandleDeleteLike)
+	r.POST("/", handler.HandlePostLike)
+	r.DELETE("/", handler.HandleDeleteLike)
 }
