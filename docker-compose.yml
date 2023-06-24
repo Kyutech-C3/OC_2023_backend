@@ -1,3 +1,8 @@
+# 青字は提供されているもの
+
+# 橙字のコロンの左側 ホストOSのファイル群
+# 橙字のコロンの右側 コンテナのパス
+
 version: '3.8'
 
 services:
@@ -17,7 +22,7 @@ services:
     volumes:
       - .:/go/src/api
     ports:
-      - '8000:8000'
+      - '8000:8000' 
     depends_on:
       - db
   adminer:
