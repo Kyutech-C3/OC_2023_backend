@@ -1,37 +1,39 @@
 package cruds
 
 import (
-	"fmt"
+	"errors"
 	"oc-2023/db"
-	// "github.com/google/uuid"
+
+	"github.com/google/uuid"
 )
 
-func CreateComment( /* content string, userID string, workID string */ ) ( /*new_comment db.Comment,*/ err error) {
-	/*
-	   new_comment = db.Comment{ID: uuid.New().String(), Content: content, UserID: userID, PostID: postID}
+func CreateComment(commentId uuid.UUID, workId uuid.UUID, userId uuid.UUID, userName string, comment string) error {
+	cmnt := db.Comments{
+		CommentID: commentId,
+		WorkID:    workId,
+		UserID:    userId,
+		UserName:  userName,
+		Comment:   comment,
+	}
+	if err := db.Psql.Create(cmnt).Error; err != nil {
+		return err
+	}
 
-	   	if err = db.Psql.Create(&new_comment).Error; err != nil {
-	   		return
-	   	}
-
-	   var user db.User
-
-	   	if err = db.Psql.Where("id = ?", userID).First(&user).Error; err != nil {
-	   		return
-	   	}
-
-	   new_comment.User = user
-	   return new_comment, err
-	*/
+	return nil
 }
 
-func DeleteComment(commentId string) (err error) {
-	if err = db.Psql.Where("id = ?", commentId).First(&db.Comment{}).Error; err != nil {
-		fmt.Println(err)
+func DeleteComment(commentId uuid.UUID, userId uuid.UUID) (err error) {
+	if err = db.Psql.Where("comment_id = ? AND user_id = ?", commentId, userId).First(&db.Comments{}).Error; err != nil {
+		err = errors.New("Comment not found")
 		return
 	}
 
-	err = db.Psql.Where("id = ?", commentId).Delete(&db.Comment{}).Error
-	fmt.Println(err)
+	cmnt := db.Comments{
+		CommentID: commentId,
+		UserID:    userId,
+	}
+	if err = db.Psql.Delete(cmnt).Error; err != nil {
+		return
+	}
 	return
 }
