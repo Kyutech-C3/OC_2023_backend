@@ -10,6 +10,9 @@ func Router(e *gin.Engine) {
 		// /api/v1となる
 		v1 := api.Group("/v1")
 		{
+			lr := v1.Group("/likes")
+			InitLikeRouter(lr)
+
 			cr := v1.Group("/comments")
 			InitCommentRouter(cr)
 		}

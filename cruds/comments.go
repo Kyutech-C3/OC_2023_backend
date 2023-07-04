@@ -15,6 +15,7 @@ func CreateComment(commentId uuid.UUID, workId uuid.UUID, userId uuid.UUID, user
 		UserName:  userName,
 		Comment:   comment,
 	}
+	
 	if err := db.Psql.Create(cmnt).Error; err != nil {
 		return err
 	}

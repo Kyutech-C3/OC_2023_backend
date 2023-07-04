@@ -1,7 +1,12 @@
-version: '3.8'
+# 青字は提供されているもの
+
+# 橙字のコロンの左側 ホストOSのファイル群
+# 橙字のコロンの右側 コンテナのパス
+
+version: '3'
 
 services:
-  db: 
+  db:
     container_name: oc-db
     image: postgres:14
     volumes:
@@ -17,7 +22,7 @@ services:
     volumes:
       - .:/go/src/api
     ports:
-      - '8000:8000'
+      - '8000:8080'
     depends_on:
       - db
   adminer:
@@ -30,6 +35,6 @@ services:
       - db
 
 volumes:
-  oc-db-volume: 
-  
+  oc-db-volume:
+
 
