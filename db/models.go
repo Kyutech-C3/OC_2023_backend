@@ -10,8 +10,9 @@ type Likes struct {
 }
 
 type Comments struct {
-	CommentID       string `gorm:"primaryKey" json:"comment_id"`
-	WorkID          uuid.UUID `gorm:"primaryKey" json:"work_id"`
-	CommentUserName string `json:"user_name"`
-	Comment         string `json:"comment"`
+	CommentID uuid.UUID `gorm:"primaryKey" type:"uuid" json:"comment_id"`
+	WorkID    uuid.UUID `type:"uuid" json:"work_id"`
+	UserID    uuid.UUID `type:"uuid" json:"user_id"`
+	UserName  string    `json:"user_name"`
+	Comment   string    `json:"comment"`
 }

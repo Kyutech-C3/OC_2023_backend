@@ -1,12 +1,12 @@
 package routers
 
 import (
-	"oc-2023/handlers"
+	handler "oc-2023/handlers"
 
 	"github.com/gin-gonic/gin"
 )
 
-func InitLikeRouter(r *gin.RouterGroup) {
-	r.POST("/", handler.HandlePostLike)
-	r.DELETE("/", handler.HandleDeleteLike)
+func InitLikeRouter(lr *gin.RouterGroup) {
+	lr.POST("", handler.HandlePostLike)
+	lr.DELETE("", handler.HandleDeleteLike)
 }

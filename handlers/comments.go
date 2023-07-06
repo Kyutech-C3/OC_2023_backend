@@ -1,18 +1,17 @@
-// workIdはフロントのパスパラメータから、userIdはフロントのuuidから
 package handler
 
 import (
+	"fmt"
 	"net/http"
 	"oc-2023/cruds"
 	"oc-2023/schemas"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
-// gin.Contextは、リクエストの (GETされた, PUTした) データやパラメータ、またはエラー情報などいろんなものを含んだもの
-// gin.Hはmap[string]interface{}と同義。
-func HandlePostLike(ctx *gin.Context) {
-	input := new(schemas.CreateLikes)
+func HandlePostComment(ctx *gin.Context) {
+	input := new(schemas.PostComments)
 
 	if err := ctx.ShouldBindJSON(input); err != nil {
 		ctx.JSON(http.StatusUnprocessableEntity, gin.H{
@@ -20,8 +19,8 @@ func HandlePostLike(ctx *gin.Context) {
 		})
 		return
 	}
-
-	if err := cruds.CreateLike(input.WorkId, input.UserId); err != nil {
+	commentId, _ := uuid.NewUUID()
+	if err := cruds.CreateComment(commentId, input.WorkId, input.UserId, input.UserName, input.Comment); err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"message": "Insert failed",
 		})
@@ -33,17 +32,20 @@ func HandlePostLike(ctx *gin.Context) {
 	return
 }
 
-func HandleDeleteLike(ctx *gin.Context) {
-	input := new(schemas.DeleteLikes)
+func HandleDeleteComment(ctx *gin.Context) {
+	input := new(schemas.DeleteComments)
 
 	if err := ctx.ShouldBindJSON(input); err != nil {
 		ctx.JSON(http.StatusUnprocessableEntity, gin.H{
-			"message": "Parse failed.",
+			"message": "Parse failed",
 		})
+		fmt.Print("=======================/n")
+		fmt.Print(err)
+		fmt.Print("=======================/n")
 		return
 	}
 
-	if err := cruds.DeleteLike(input.WorkId, input.UserId); err != nil {
+	if err := cruds.DeleteComment(input.CommentId, input.UserId); err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"message": "Eject failed",
 		})
