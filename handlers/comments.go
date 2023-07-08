@@ -29,7 +29,6 @@ func HandlePostComment(ctx *gin.Context) {
 			"message": "Success POST",
 		})
 	}
-	return
 }
 
 func HandleDeleteComment(ctx *gin.Context) {
@@ -54,5 +53,4 @@ func HandleDeleteComment(ctx *gin.Context) {
 			"message": "Success DELETE",
 		})
 	}
-	return
 }

@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func Router(e *gin.Engine) {
+func InitRouter(e *gin.Engine) {
 	api := e.Group("/api")
 	{
 		// /api/v1となる
@@ -15,6 +15,9 @@ func Router(e *gin.Engine) {
 
 			cr := v1.Group("/comments")
 			InitCommentRouter(cr)
+
+			wr := v1.Group("/works")
+			InitWorkRouter(wr)
 		}
 	}
 }

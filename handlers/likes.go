@@ -30,7 +30,6 @@ func HandlePostLike(ctx *gin.Context) {
 			"message": "Success POST",
 		})
 	}
-	return
 }
 
 func HandleDeleteLike(ctx *gin.Context) {
@@ -52,5 +51,4 @@ func HandleDeleteLike(ctx *gin.Context) {
 			"message": "Success DELETE",
 		})
 	}
-	return
 }

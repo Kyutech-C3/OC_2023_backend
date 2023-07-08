@@ -3,8 +3,17 @@ package cruds
 import (
 	"errors"
 	"oc-2023/db"
+
 	"github.com/google/uuid"
 )
+
+func GerLikesByID(id uuid.UUID) (likes []db.Likes, err error) {
+	if err = db.Psql.Where("work_id = ?", id).Find(&likes).Error; err != nil {
+		return nil, err
+	}
+
+	return likes, nil
+}
 
 func CreateLike(workId uuid.UUID, userId uuid.UUID) error {
 	lk := db.Likes{
