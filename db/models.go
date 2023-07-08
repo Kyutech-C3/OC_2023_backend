@@ -1,6 +1,8 @@
 package db
 
-import "github.com/google/uuid"
+import (
+	"github.com/google/uuid"
+)
 
 // データベースの表をイメージして読む
 

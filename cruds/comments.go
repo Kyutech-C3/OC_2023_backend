@@ -7,6 +7,14 @@ import (
 	"github.com/google/uuid"
 )
 
+func GetCommetsByID(id uuid.UUID) (comments []db.Comments, err error) {
+	if err = db.Psql.Where("work_id = ?", id).Find(&comments).Error; err != nil {
+		return nil, err
+	}
+
+	return comments, nil
+}
+
 func CreateComment(commentId uuid.UUID, workId uuid.UUID, userId uuid.UUID, userName string, comment string) error {
 	cmnt := db.Comments{
 		CommentID: commentId,
@@ -15,7 +23,7 @@ func CreateComment(commentId uuid.UUID, workId uuid.UUID, userId uuid.UUID, user
 		UserName:  userName,
 		Comment:   comment,
 	}
-	
+
 	if err := db.Psql.Create(cmnt).Error; err != nil {
 		return err
 	}
