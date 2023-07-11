@@ -16,19 +16,13 @@ type DeleteLikes struct {
 	WorkId uuid.UUID `type:"uuid" json:"work_id"`
 }
 
-type Like struct {
-	UserID uuid.UUID `json:"user_id"`
-	WorkID uuid.UUID `json:"work_id"`
-}
+type Like string
 
 func ConvertLikeModelToSchemas(likes []db.Likes) []Like {
 	schemaLikes := make([]Like, len(likes))
 
 	for i, ml := range likes {
-		schemaLikes[i] = Like{
-			UserID: ml.UserID,
-			WorkID: ml.WorkID,
-		}
+		schemaLikes[i] = Like(ml.UserID.String())
 	}
 
 	return schemaLikes
