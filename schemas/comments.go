@@ -2,6 +2,7 @@ package schemas
 
 import (
 	"oc-2023/db"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -24,6 +25,7 @@ type Comment struct {
 	UserID    uuid.UUID `json:"user_id"`
 	UserName  string    `json:"user_name"`
 	Comment   string    `json:"comment"`
+	CreatedAt time.Time `json:"created_at"`
 }
 
 func ConvertCommentModelToSchema(comments []db.Comments) []Comment {
@@ -36,6 +38,7 @@ func ConvertCommentModelToSchema(comments []db.Comments) []Comment {
 			WorkID:    mc.WorkID,
 			UserName:  mc.UserName,
 			Comment:   mc.Comment,
+			CreatedAt: mc.CreatedAt,
 		}
 	}
 

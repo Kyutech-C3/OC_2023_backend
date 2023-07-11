@@ -1,6 +1,8 @@
 package db
 
 import (
+	"time"
+
 	"github.com/google/uuid"
 )
 
@@ -17,4 +19,5 @@ type Comments struct {
 	UserID    uuid.UUID `type:"uuid" json:"user_id"`
 	UserName  string    `json:"user_name"`
 	Comment   string    `json:"comment"`
+	CreatedAt time.Time
 }
