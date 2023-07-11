@@ -1,17 +1,30 @@
-package handler
+package comment
 
 import (
-	"fmt"
 	"net/http"
-	"oc-2023/cruds"
-	"oc-2023/schemas"
+	"oc-2023/pkg/domain/entity"
+	"oc-2023/pkg/usecase"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 )
 
-func HandlePostComment(ctx *gin.Context) {
-	input := new(schemas.PostComments)
+type CommentHandler interface {
+	Create(ctx *gin.Context)
+	Delete(ctx *gin.Context)
+}
+
+type commentHandler struct {
+	interactor usecase.Interactor
+}
+
+func New(interactor usecase.Interactor) CommentHandler {
+	return &commentHandler{
+		interactor,
+	}
+}
+
+func (lh *commentHandler) Create(ctx *gin.Context) {
+	input := new(entity.PostComments)
 
 	if err := ctx.ShouldBindJSON(input); err != nil {
 		ctx.JSON(http.StatusUnprocessableEntity, gin.H{
@@ -19,8 +32,7 @@ func HandlePostComment(ctx *gin.Context) {
 		})
 		return
 	}
-	commentId, _ := uuid.NewUUID()
-	if err := cruds.CreateComment(commentId, input.WorkId, input.UserId, input.UserName, input.Comment); err != nil {
+	if err := lh.interactor.CreateComment(ctx, input); err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"message": "Insert failed",
 		})
@@ -31,20 +43,17 @@ func HandlePostComment(ctx *gin.Context) {
 	}
 }
 
-func HandleDeleteComment(ctx *gin.Context) {
-	input := new(schemas.DeleteComments)
+func (lh *commentHandler) Delete(ctx *gin.Context) {
+	input := new(entity.DeleteComments)
 
 	if err := ctx.ShouldBindJSON(input); err != nil {
 		ctx.JSON(http.StatusUnprocessableEntity, gin.H{
-			"message": "Parse failed",
+			"message": "Parse failed.",
 		})
-		fmt.Print("=======================/n")
-		fmt.Print(err)
-		fmt.Print("=======================/n")
 		return
 	}
 
-	if err := cruds.DeleteComment(input.CommentId, input.UserId); err != nil {
+	if err := lh.interactor.DeleteComment(ctx, input); err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"message": "Eject failed",
 		})

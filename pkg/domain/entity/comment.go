@@ -1,7 +1,6 @@
-package schemas
+package entity
 
 import (
-	"oc-2023/db"
 	"time"
 
 	"github.com/google/uuid"
@@ -26,21 +25,4 @@ type Comment struct {
 	UserName  string    `json:"user_name"`
 	Comment   string    `json:"comment"`
 	CreatedAt time.Time `json:"created_at"`
-}
-
-func ConvertCommentModelToSchema(comments []db.Comments) []Comment {
-	schemaComments := make([]Comment, len(comments))
-
-	for i, mc := range comments {
-		schemaComments[i] = Comment{
-			CommentID: mc.CommentID,
-			UserID:    mc.UserID,
-			WorkID:    mc.WorkID,
-			UserName:  mc.UserName,
-			Comment:   mc.Comment,
-			CreatedAt: mc.CreatedAt,
-		}
-	}
-
-	return schemaComments
 }
