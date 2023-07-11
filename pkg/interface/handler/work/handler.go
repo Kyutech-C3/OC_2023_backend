@@ -1,19 +1,34 @@
-package handler
+package work
 
 import (
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
-	"oc-2023/config"
-	"oc-2023/cruds"
-	"oc-2023/schemas"
+	"oc-2023/pkg/config"
+	"oc-2023/pkg/domain/entity"
+	"oc-2023/pkg/usecase"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
 
-func HandleGetWorks(ctx *gin.Context) {
+type WorkHandler interface {
+	Index(ctx *gin.Context)
+	GetByID(ctx *gin.Context)
+}
+
+type workHandler struct {
+	interactor usecase.Interactor
+}
+
+func New(interactor usecase.Interactor) WorkHandler {
+	return &workHandler{
+		interactor,
+	}
+}
+
+func (wh *workHandler) Index(ctx *gin.Context) {
 	tagNames := ctx.Query("tag_names")
 	res, err := http.Get(fmt.Sprintf("%s/api/v1/works?tag_names=%s", config.APIHost, tagNames))
 	if err != nil {
@@ -26,7 +41,7 @@ func HandleGetWorks(ctx *gin.Context) {
 		fmt.Println(err)
 	}
 
-	var works schemas.Works
+	var works entity.Works
 	if err := json.Unmarshal(body, &works); err != nil {
 		fmt.Println(err)
 	}
@@ -37,17 +52,17 @@ func HandleGetWorks(ctx *gin.Context) {
 			fmt.Printf("Invalid UUID string: %v\n", err)
 			return
 		}
-		likes, err := cruds.GerLikesByID(uid)
+		likes, err := wh.interactor.GetLikesByID(ctx, uid)
 		if err != nil {
 			fmt.Println(err)
 		}
-		works.Works[i].Likes = schemas.ConvertLikeModelToSchemas(likes)
+		works.Works[i].Likes = likes
 	}
 
 	ctx.JSON(http.StatusOK, &works)
 }
 
-func HandleGetWork(ctx *gin.Context) {
+func (wh *workHandler) GetByID(ctx *gin.Context) {
 	id := ctx.Param("id")
 	res, err := http.Get(fmt.Sprintf("%s/api/v1/works/%s", config.APIHost, id))
 	if err != nil {
@@ -60,7 +75,7 @@ func HandleGetWork(ctx *gin.Context) {
 		fmt.Println(err)
 	}
 
-	var work schemas.Work
+	var work entity.Work
 	if err := json.Unmarshal(body, &work); err != nil {
 		fmt.Println(err)
 	}
@@ -71,18 +86,18 @@ func HandleGetWork(ctx *gin.Context) {
 		return
 	}
 
-	likes, err := cruds.GerLikesByID(uid)
+	likes, err := wh.interactor.GetLikesByID(ctx, uid)
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	comments, err := cruds.GetCommetsByID(uid)
+	comments, err := wh.interactor.GetCommentsByID(ctx, uid)
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	work.Likes = schemas.ConvertLikeModelToSchemas(likes)
-	work.Comments = schemas.ConvertCommentModelToSchema(comments)
+	work.Likes = likes
+	work.Comments = comments
 
 	ctx.JSON(http.StatusOK, &work)
 }

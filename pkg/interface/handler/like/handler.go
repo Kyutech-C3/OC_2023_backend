@@ -1,18 +1,30 @@
-// workIdはフロントのパスパラメータから、userIdはフロントのuuidから
-package handler
+package like
 
 import (
 	"net/http"
-	"oc-2023/cruds"
-	"oc-2023/schemas"
+	"oc-2023/pkg/domain/entity"
+	"oc-2023/pkg/usecase"
 
 	"github.com/gin-gonic/gin"
 )
 
-// gin.Contextは、リクエストの (GETされた, PUTした) データやパラメータ、またはエラー情報などいろんなものを含んだもの
-// gin.Hはmap[string]interface{}と同義。
-func HandlePostLike(ctx *gin.Context) {
-	input := new(schemas.CreateLikes)
+type LikeHandler interface {
+	Create(ctx *gin.Context)
+	Delete(ctx *gin.Context)
+}
+
+type likeHandler struct {
+	interactor usecase.Interactor
+}
+
+func New(interactor usecase.Interactor) LikeHandler {
+	return &likeHandler{
+		interactor,
+	}
+}
+
+func (lh *likeHandler) Create(ctx *gin.Context) {
+	input := new(entity.PostLikes)
 
 	if err := ctx.ShouldBindJSON(input); err != nil {
 		ctx.JSON(http.StatusUnprocessableEntity, gin.H{
@@ -20,8 +32,7 @@ func HandlePostLike(ctx *gin.Context) {
 		})
 		return
 	}
-
-	if err := cruds.CreateLike(input.WorkId, input.UserId); err != nil {
+	if err := lh.interactor.CreateLike(ctx, input); err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"message": "Insert failed",
 		})
@@ -32,8 +43,8 @@ func HandlePostLike(ctx *gin.Context) {
 	}
 }
 
-func HandleDeleteLike(ctx *gin.Context) {
-	input := new(schemas.DeleteLikes)
+func (lh *likeHandler) Delete(ctx *gin.Context) {
+	input := new(entity.DeleteLikes)
 
 	if err := ctx.ShouldBindJSON(input); err != nil {
 		ctx.JSON(http.StatusUnprocessableEntity, gin.H{
@@ -42,7 +53,7 @@ func HandleDeleteLike(ctx *gin.Context) {
 		return
 	}
 
-	if err := cruds.DeleteLike(input.WorkId, input.UserId); err != nil {
+	if err := lh.interactor.DeleteLike(ctx, input); err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"message": "Eject failed",
 		})
