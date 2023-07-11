@@ -3,6 +3,7 @@ package cruds
 import (
 	"errors"
 	"oc-2023/db"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -16,12 +17,18 @@ func GetCommetsByID(id uuid.UUID) (comments []db.Comments, err error) {
 }
 
 func CreateComment(commentId uuid.UUID, workId uuid.UUID, userId uuid.UUID, userName string, comment string) error {
+	location, err := time.LoadLocation("Asia/Tokyo")
+	if err != nil {
+		return err
+	}
+
 	cmnt := db.Comments{
 		CommentID: commentId,
 		WorkID:    workId,
 		UserID:    userId,
 		UserName:  userName,
 		Comment:   comment,
+		CreatedAt: time.Now().In(location),
 	}
 
 	if err := db.Psql.Create(cmnt).Error; err != nil {
