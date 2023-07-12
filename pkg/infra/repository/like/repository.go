@@ -34,17 +34,15 @@ func (r *repository) Insert(_ context.Context, like *entity.PostLikes) error {
 }
 
 func (r *repository) Delete(_ context.Context, like *entity.DeleteLikes) error {
-	if err := r.conn.Where("work_id = ? AND user_id = ?", like.WorkId, like.UserId).First(&model.Likes{}).Error; err != nil {
+	var lk model.Likes
+	if err := r.conn.Where("work_id = ? AND user_id = ?", like.WorkId, like.UserId).First(&lk).Error; err != nil {
 		return err
 	}
 
-	lk := model.Likes{
-		WorkID: like.WorkId,
-		UserID: like.UserId,
-	}
-	if err := r.conn.Delete(lk).Error; err != nil {
+	if err := r.conn.Delete(&lk).Error; err != nil {
 		return err
 	}
+
 	return nil
 }
 

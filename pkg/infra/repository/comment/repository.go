@@ -44,16 +44,12 @@ func (r *repository) Insert(_ context.Context, comment *entity.PostComments) err
 }
 
 func (r *repository) Delete(_ context.Context, comment *entity.DeleteComments) error {
-	if err := r.conn.Where("comment_id = ? AND user_id = ?", comment.CommentId, comment.UserId).First(model.Comments{}).Error; err != nil {
+	var cm model.Comments
+	if err := r.conn.Where("comment_id = ? AND user_id = ?", comment.CommentId, comment.UserId).First(&cm).Error; err != nil {
 		return err
 	}
 
-	cm := model.Comments{
-		CommentID: comment.CommentId,
-		UserID:    comment.UserId,
-	}
-
-	if err := r.conn.Delete(cm).Error; err != nil {
+	if err := r.conn.Delete(&cm).Error; err != nil {
 		return err
 	}
 
