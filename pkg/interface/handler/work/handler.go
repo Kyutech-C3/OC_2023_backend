@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"oc-2023/pkg/config"
 	"oc-2023/pkg/domain/entity"
 	"oc-2023/pkg/usecase"
@@ -29,8 +30,10 @@ func New(interactor usecase.Interactor) WorkHandler {
 }
 
 func (wh *workHandler) Index(ctx *gin.Context) {
-	tagNames := ctx.Query("tag_names")
-	res, err := http.Get(fmt.Sprintf("%s/api/v1/works?tag_names=%s", config.APIHost, tagNames))
+	tagNames := ctx.Request.URL.Query().Get("tag_names")
+	tagNamesEncoded := url.QueryEscape(tagNames)
+	fmt.Println(tagNamesEncoded)
+	res, err := http.Get(fmt.Sprintf("%s/api/v1/works?tag_names=%s", config.APIHost, tagNamesEncoded))
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -41,9 +44,13 @@ func (wh *workHandler) Index(ctx *gin.Context) {
 		fmt.Println(err)
 	}
 
+	fmt.Println("===")
+	fmt.Println("Response: ", string(body))
+
 	var works entity.Works
 	if err := json.Unmarshal(body, &works); err != nil {
 		fmt.Println(err)
+		fmt.Println("this")
 	}
 
 	for i, w := range works.Works {
