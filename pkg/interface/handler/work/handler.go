@@ -9,6 +9,7 @@ import (
 	"oc-2023/pkg/config"
 	"oc-2023/pkg/domain/entity"
 	"oc-2023/pkg/usecase"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -31,9 +32,25 @@ func New(interactor usecase.Interactor) WorkHandler {
 
 func (wh *workHandler) Index(ctx *gin.Context) {
 	tagNames := ctx.Request.URL.Query().Get("tag_names")
-	tagNamesEncoded := url.QueryEscape(tagNames)
-	fmt.Println(tagNamesEncoded)
-	res, err := http.Get(fmt.Sprintf("%s/api/v1/works?tag_names=%s", config.APIHost, tagNamesEncoded))
+	searchWord := ctx.Request.URL.Query().Get("search_word")
+
+	baseURL := fmt.Sprintf("%s/api/v1/works", config.APIHost)
+	params := make([]string, 0)
+
+	if tagNames != "" {
+		params = append(params, "tag_names="+url.QueryEscape(tagNames))
+	}
+
+	if searchWord != "" {
+		params = append(params, "search_word="+url.QueryEscape(searchWord))
+	}
+
+	if len(params) > 0 {
+		baseURL = baseURL + "?" + strings.Join(params, "&")
+	}
+
+	fmt.Println(baseURL)
+	res, err := http.Get(baseURL)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -44,13 +61,9 @@ func (wh *workHandler) Index(ctx *gin.Context) {
 		fmt.Println(err)
 	}
 
-	fmt.Println("===")
-	fmt.Println("Response: ", string(body))
-
 	var works entity.Works
 	if err := json.Unmarshal(body, &works); err != nil {
 		fmt.Println(err)
-		fmt.Println("this")
 	}
 
 	for i, w := range works.Works {
